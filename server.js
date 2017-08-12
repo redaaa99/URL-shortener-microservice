@@ -22,16 +22,25 @@ function findThisUrl(url,db,response)
     else/* NOT FOUND THEN INSERT*/
       {
           var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
+          var obj = {
+            "id": newId,
+            "redirectTo" : url
+          };
+        
+         db.collection('urls').save(obj, function(err, result) {
+           if (err) throw err;
           
-            response.json({
+           response.json({
                       original_url : url,
                       short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+newId
-                    });  
-          
-        db.collection('urls').insertOne({
+                    }); 
+         });
+        /*db.collection('urls').insertOne({
                 "id": newId,
                 "redirectTo" : url
-              });
+              }).then(function(result){
+             
+        });*/
       }
     
   });
@@ -39,7 +48,7 @@ function findThisUrl(url,db,response)
 
 app.use(express.static('public'));
 
-MongoClient.connect(databaseUrl, function (err, db){
+MongoClient.connect(databaseUrl).then(function (err, db){
   if (err) {
           console.log('Unable to connect to the mongoDB server. Error:', err);
   } else {
@@ -62,25 +71,13 @@ MongoClient.connect(databaseUrl, function (err, db){
 
       if(reg.test(url))
         {
-          var obj = findThisUrl(url,db,response);
-            if(obj!==null)
-            {
-               
-            }
-          else
-            {
-              response.json({
-                  original_url : url,
-                  short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+insertThisUrl(url,db)
-                });
-            }
+          findThisUrl(url,db,response);
         }
       else
         {
           response.json({error : "Wrong url format, make sure you have a valid protocol and real site."});
         }
     }); 
-
   db.close();
   }
 });
