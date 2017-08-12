@@ -42,10 +42,16 @@ app.get(/^\/(.+)/, function (request, response) {
           console.log('Unable to connect to the mongoDB server. Error:', err);
         } else {
 
-          var obj = db.collection('urls').find({"redirectTo": url});
-          console.log(obj);
-          response.send(obj.toString());
-          /*if(Object.keys(obj).length === 0 && obj.constructor === Object)
+          var obj = db.collection('urls').findOne({"redirectTo": url}).then(function(obj){
+            if(!(obj===null))
+            {
+               response.json({
+                  original_url : url,
+                  short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+obj.id
+                });
+               
+            }
+          else
             {
               var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
               db.collection('urls').insertOne({
@@ -57,13 +63,9 @@ app.get(/^\/(.+)/, function (request, response) {
                 short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+newId
               });
             }
-          else
-            {
-              response.json({
-                original_url : url,
-                short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+obj.id
-              });
-            }*/
+          });
+          
+          /**/
                                   
           db.close();
         }
