@@ -15,8 +15,8 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-app.get(/^[0-9]{4}$/, function (request, response) {
-    response.send(request.params["0"].toString());
+app.get(/([0-9]{0,4})/, function (request, response) {
+    response.send(request.params);
 });
 
 
