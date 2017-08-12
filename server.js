@@ -6,11 +6,12 @@ var express = require('express');
 var app = express();
 var mongodb = require('mongodb');
 var databaseUrl = 'mongodb://'+process.env.USER+':'+process.env.PASS+'@'+process.env.HOST+':'+process.env.DB_PORT+'/'+process.env.DB;
-
+var options = { keepAlive: 300000, connectTimeoutMS: 30000 }
 
 function findThisUrl(url,db,response)
 {
   db.collection('urls').findOne({"redirectTo": url},function(result){
+    console.log(result);
     if(result)
       {
         response.json({
@@ -47,9 +48,8 @@ function findThisUrl(url,db,response)
 
 app.use(express.static('public'));
 var db;
-mongodb.MongoClient.connect(databaseUrl,function (err, database){
+mongodb.MongoClient.connect(databaseUrl,options,function (err, db){
   if (err) console.log('Unable to connect to the mongoDB server.');
-  db=database;
   app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
