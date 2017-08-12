@@ -48,39 +48,40 @@ function findThisUrl(url,db,response)
 app.use(express.static('public'));
 
 mongodb.MongoClient.connect(databaseUrl).then(function (err, db){
-  if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-  } else {
-    
-    app.get("/", function (request, response) {
+  if (err) 
+  {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  }
+  else
+    {
+      console.log(db);
+      app.get("/", function (request, response) {
       response.sendFile(__dirname + '/views/index.html');
-    });
-    app.get("/:id(\\d+)", function (request, response) {
-        var id =request.params.id;
-        /*
-          if id exists in database redirect to website;
-          else response.json({error : "Cannot find this URL in database"});
-        */
+});
+      app.get("/:id(\\d+)", function (request, response) {
+      var id =request.params.id;
+      /*
+        if id exists in database redirect to website;
+        else response.json({error : "Cannot find this URL in database"});
+      */
       response.send(id);
-    });    
-    app.get(/^\/(.+)/, function (request, response) {
+});    
+      app.get(/^\/(.+)/, function (request, response) {
       var url = request.params["0"].toString();
       var reg =/^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
-
       if(reg.test(url))
-        {
-          findThisUrl(url,db,response);
-        }
-      else
-        {
-          response.json({error : "Wrong url format, make sure you have a valid protocol and real site."});
-        }
-    }); 
-    app.listen(process.env.PORT);
-    db.close();
-  }
-  
+      {
 
+        findThisUrl(url,db,response);
+      }
+      else
+      {
+        response.json({error : "Wrong url format, make sure you have a valid protocol and real site."});
+      }
+      }); 
+      app.listen(process.env.PORT);
+      db.close();
+    }
 });
                     
 

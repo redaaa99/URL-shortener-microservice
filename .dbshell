@@ -1,3 +1,0 @@
-show dbs
-use redaaa
-db.getCollection("urls").find()
