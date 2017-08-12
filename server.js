@@ -5,22 +5,11 @@
 var express = require('express');
 var app = express();
 var mongodb = require('mongodb');
-var databaseUrl = 'mongodb://'+process.env.USER+':'+process.env.PASS+'@'+process.env.HOST+':'+process.env.DB_PORT+'/'+process.env.DB;;
+var databaseUrl = 'mongodb://'+process.env.USER+':'+process.env.PASS+'@'+process.env.HOST+':'+process.env.DB_PORT+'/'+process.env.DB;
 
 var MongoClient = mongodb.MongoClient;
 
-MongoClient.connect(databaseUrl, function (err, db) {
-  if (err) {
-    console.log('Unable to connect to the mongoDB server. Error:', err);
-  } else {
-    console.log('Connection established to', databaseUrl);
 
-    // do some work here with the database.
-
-    //Close connection
-    db.close();
-  }
-});
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
@@ -48,6 +37,19 @@ app.get(/^\/(.+)/, function (request, response) {
   
   if(reg.test(url))
     {
+      MongoClient.connect(databaseUrl, function (err, db) {
+        if (err) {
+          console.log('Unable to connect to the mongoDB server. Error:', err);
+        } else {
+          console.log('Connection established to', databaseUrl);
+
+          db.collection('urls')db.products.insert( { item: "card", qty: 15 } )
+
+
+          //Close connection
+          db.close();
+        }
+      });
       response.json({
         original_url : url,
         short_url : url
