@@ -9,22 +9,32 @@ var databaseUrl = 'mongodb://'+process.env.USER+':'+process.env.PASS+'@'+process
 
 var MongoClient = mongodb.MongoClient;
 
-function findThisUrl(url,db)
+function findThisUrl(url,db,response)
 {
   db.collection('urls').findOne({"redirectTo": url}).then(function(result){
-    return result;
-  });
-}
-
-function insertThisUrl(url,db)
-{
-  var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
-  db.collection('urls').insertOne({
+    if(result)
+      {
+        response.json({
+                  original_url : url,
+                  short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+result.id
+                });
+      }
+    else/* NOT FOUND THEN INSERT*/
+      {
+          var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
+          
+            response.json({
+                      original_url : url,
+                      short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+newId
+                    });  
+          
+        db.collection('urls').insertOne({
                 "id": newId,
                 "redirectTo" : url
-              }).then(function(obj){
-                 return newId;
               });
+      }
+    
+  });
 }
 
 app.use(express.static('public'));
@@ -52,13 +62,10 @@ MongoClient.connect(databaseUrl, function (err, db){
 
       if(reg.test(url))
         {
-          var obj = findThisUrl(url,db);
+          var obj = findThisUrl(url,db,response);
             if(obj!==null)
             {
-               response.json({
-                  original_url : url,
-                  short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+obj.id
-                });
+               
             }
           else
             {
