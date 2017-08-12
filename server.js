@@ -42,7 +42,7 @@ app.get(/^\/(.+)/, function (request, response) {
           console.log('Unable to connect to the mongoDB server. Error:', err);
         } else {
 
-          var obj = db.collection('urls').find( { redirectTo: url } );
+          var obj = db.collection('urls').find({"redirectTo": url});
           console.log(obj);
           response.send(obj.toString());
           /*if(Object.keys(obj).length === 0 && obj.constructor === Object)
