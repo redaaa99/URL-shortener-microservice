@@ -16,6 +16,17 @@ function findThisUrl(url,db)
   });
 }
 
+function insertThisUrl(url,db)
+{
+  var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
+  db.collection('urls').insertOne({
+                "id": newId,
+                "redirectTo" : url
+              }).then(function(obj){
+                 return newId;
+              });
+}
+
 app.use(express.static('public'));
 
 MongoClient.connect(databaseUrl, function (err, db){
@@ -41,29 +52,21 @@ MongoClient.connect(databaseUrl, function (err, db){
 
       if(reg.test(url))
         {
-          var obj = db.collection('urls').findOne({"redirectTo": url}).then(function(obj){
-            if(!(obj===null))
+          var obj = findThisUrl(url,db);
+            if(obj!==null)
             {
                response.json({
                   original_url : url,
                   short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+obj.id
                 });
-
             }
           else
             {
-              var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
-              db.collection('urls').insertOne({
-                "id": newId,
-                "redirectTo" : url
-              }).then(function(obj){
-                response.json({
+              response.json({
                   original_url : url,
-                  short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+newId
+                  short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+insertThisUrl(url,db)
                 });
-              });
             }
-          });
         }
       else
         {
