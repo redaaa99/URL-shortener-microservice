@@ -6,13 +6,10 @@ var express = require('express');
 var app = express();
 var mongodb = require('mongodb');
 var databaseUrl = 'mongodb://'+process.env.USER+':'+process.env.PASS+'@'+process.env.HOST+':'+process.env.DB_PORT+'/'+process.env.DB;
-var options = { keepAlive: 300000, connectTimeoutMS: 30000 }
 
-function findThisUrl(url,db,response)
-{
+function findThisUrl(url,db,response){
     db.collection('urls').findOne({"redirectTo": url},function(err,result){
     if(err){throw err;}
-    console.log(result);
     if(result)
       {
         response.json({
@@ -22,7 +19,7 @@ function findThisUrl(url,db,response)
       }
     else/* NOT FOUND THEN INSERT*/
       {
-          var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
+          var newId = (Math.floor((Math.random() * 100000) + 2)).toString();
         
           db.collection('urls').insertOne({
                   "id": newId,
@@ -35,30 +32,34 @@ function findThisUrl(url,db,response)
                         });
                   });
       }
-    
   });
-
-  
 }
-
-function findThisId(id,db,response)
-{
+function findThisId(id,db,response){
   db.collection('urls').findOne({"id": id},function(err,result){
     if(err){throw err;}
-    console.log(result);
+    if(result)
+      {
+        response.redirect(result.redirectTo);
+        
+      }
+    else
+      {
+        response.json({
+                  error: "This url is not on the database."
+                });
+      }
+
   });
 }
-
 app.use(express.static('public'));
-var db;
-mongodb.MongoClient.connect(databaseUrl,options,function (err, db){
+mongodb.MongoClient.connect(databaseUrl,function (err, db){
   if (err) console.log('Unable to connect to the mongoDB server.');
   app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
   app.get("/:id(\\d+)", function (request, response) {
       var id =request.params.id;
-      findThisId(id);
+      findThisId(id,db,response);
     });    
   app.get(/^\/(.+)/, function (request, response) {
     var url = request.params["0"].toString();
@@ -76,10 +77,3 @@ mongodb.MongoClient.connect(databaseUrl,options,function (err, db){
 
     
 });
-                    
-
-
-
-
-
-
