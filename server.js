@@ -43,17 +43,23 @@ app.get(/^\/(.+)/, function (request, response) {
         } else {
           console.log('Connection established to', databaseUrl);
 
-          db.collection('urls')db.products.insert( { item: "card", qty: 15 } )
-
-
-          //Close connection
+          var obj = db.collection('urls').find( { redirectTo: url } );
+          if(Object.keys(obj).length === 0 && obj.constructor === Object)
+            {
+              db.collection('urls').insert({
+                id: (Math.floor((Math.random() * 10000) + 2)).toString(),
+                redirectTo : url
+              })
+            }
+          else
+            {
+              
+            }
+                                  
           db.close();
         }
       });
-      response.json({
-        original_url : url,
-        short_url : url
-      });
+      
     }
   else
     {
