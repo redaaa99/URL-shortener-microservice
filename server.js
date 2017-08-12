@@ -41,20 +41,29 @@ app.get(/^\/(.+)/, function (request, response) {
         if (err) {
           console.log('Unable to connect to the mongoDB server. Error:', err);
         } else {
-          console.log('Connection established to', databaseUrl);
 
           var obj = db.collection('urls').find( { redirectTo: url } );
-          if(Object.keys(obj).length === 0 && obj.constructor === Object)
+          console.log(obj);
+          response.send(obj.toString());
+          /*if(Object.keys(obj).length === 0 && obj.constructor === Object)
             {
-              db.collection('urls').insert({
-                id: (Math.floor((Math.random() * 10000) + 2)).toString(),
+              var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
+              db.collection('urls').insertOne({
+                id: newId,
                 redirectTo : url
-              })
+              });
+              response.json({
+                original_url : url,
+                short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+newId
+              });
             }
           else
             {
-              
-            }
+              response.json({
+                original_url : url,
+                short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+obj.id
+              });
+            }*/
                                   
           db.close();
         }
