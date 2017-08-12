@@ -4,6 +4,9 @@
 // init project
 var express = require('express');
 var app = express();
+var mongodb = require('mongodb');
+var MongoClient = mongodb.MongoClient;
+var url = 'mongodb://redaaa:redaader99@ds123080.mlab.com:23080/url-shortener-microservice-redaaa';
 
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
