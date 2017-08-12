@@ -55,12 +55,13 @@ app.get(/^\/(.+)/, function (request, response) {
             {
               var newId = (Math.floor((Math.random() * 10000) + 2)).toString();
               db.collection('urls').insertOne({
-                id: newId,
-                redirectTo : url
-              });
-              response.json({
-                original_url : url,
-                short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+newId
+                "id": newId,
+                "redirectTo" : url
+              }).then(function(obj){
+                response.json({
+                  original_url : url,
+                  short_url : "https://url-shortener-microservice-redaaa.glitch.me/"+newId
+                });
               });
             }
           });
